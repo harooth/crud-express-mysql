@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+	<div class="loader">
+
+		<div id="loading"></div>
+		<h3>Loading...</h3>
+	</div>
+
+	<script>
+		const loader = document.querySelector(".loader");
+
+		fetchHandler();
+
+		function fetchHandler() {
+			displayLoading();
+
+			const body = `<h1>Database content</h1>
+				<table border="1px" id="table"> 
+					<!-- esi petqa hanel stexic -->
+					<tr>
+						<td><b>Id</b></td>
+						<td><b>Name</b></td>
+						<td><b>Email</b></td>
+						<td><b>Password</b></td>
+						<td colspan="2">Action</td>
+					</tr>		
+				</table>
+				<br>
+				<a href="create.html">New post</a>
+				`
+
+			fetch("/all")
+				// checking if there is an error while fetching result
+				.then(async resp => {
+					if (!resp.ok) {
+						// console.log(resp)
+						const data = await resp.json();
+						return Promise.reject(data.msg)
+					}
+					return resp.json()
+				})
+				.then(data => {
+					// ok case
+					hideLoading()
+					console.log(data);
+					document.body.innerHTML = body;
+					const table = document.querySelector("#table")
+					data.forEach(el => {
+						let { id, name, email, password } = el;
+						let row = table.insertRow();
+						row.insertCell().innerHTML = `<a href="get.html?id=${id}">${id}</a>`;
+						row.insertCell().innerHTML = name;
+						row.insertCell().innerHTML = email;
+						row.insertCell().innerHTML = password;
+						row.insertCell().innerHTML = `<a href="delete.html?id=${id}">Delete</a>`;
+						row.insertCell().innerHTML = `<a href="update.html?id=${id}">Update</a>`;
+
+						// for(let key in el) {
+						// 	row.insertCell().innerHTML = el[key];
+						// }
+					});
+				})
+				.catch(err => {
+					// error handling
+					hideLoading()
+					console.log(err)
+					document.body.innerHTML = `<h2>${err}</h2`;
+				})
+		}
+
+		function displayLoading() {
+			loader.classList.add("display");
+			// to stop loading after some time
+			let id = setTimeout(() => {
+				loader.classList.remove("display");
+			}, 1000);
+			clearTimeout(id);
+		}
+
+		// hiding loading 
+		function hideLoading() {
+			loader.classList.remove("display");
+		}
+
+
+
+
+
+	</script>
+</body>
+
+
+</html>

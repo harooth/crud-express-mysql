@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Delete</title>
+</head>
+
+<body>
+
+</body>
+<script>
+
+	var urlParams = new URLSearchParams(window.location.search);
+	var id = urlParams.get('id');
+	// console.log(id);
+
+	let params = {
+		method: "Delete",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({
+			id
+		})
+	}
+	fetch(`/delete/${id}`, params)
+		.then(async resp => {
+			if (!resp.ok) {
+				const data = await resp.json();
+				return Promise.reject(data.msg)
+			}
+			return resp.json()
+		})
+		.then(data => {
+			document.body.innerHTML = "<h3>Deleted Successfully</h3><br><a href='/'>Main page</a>"
+		})
+		.catch(err => {
+			// error handling
+			console.log(err)
+			document.body.innerHTML = `<h2>${err}</h2`;
+		})
+
+
+</script>
+
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>New Post</title>
+</head>
+<body>
+	<!-- <form action="/sql" method="post"> -->
+	<form onsubmit="create(); return false;" method="post">
+		<input id="name" type="text" name="name" placeholder="Name"><br>
+		<input id="email" type="text" name="email" placeholder="Email"><br>
+		<input id="password" type="text" name="password" placeholder="Password"><br>
+		<button type="submit">Submit</button>
+	</form>
+</body>
+<script>
+	function create() {
+		let name = document.querySelector("#name").value;
+		let email = document.querySelector("#email").value;
+		let password = document.querySelector("#password").value;
+		// fetch("/create", {
+		// 	"method": "POST",
+		// 	headers: {
+		// 		"Content-Type": "application/json"
+		// 	},
+		// 	body: JSON.stringify({
+		// 		name,
+		// 		email,
+		// 		password
+		// 	})
+		// })
+		// .then(resp=>window.location.href="/")
+		// .catch(err=>console.log(err))
+		let params = {
+			"method": "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({
+				name,
+				email,
+				password
+			})
+		}
+		fetch("/create", params)
+		// checking if there is an error while fetching result
+		.then(async resp => {
+			if (!resp.ok) {
+				const data = await resp.json();
+				return Promise.reject(data.msg)
+			}
+			return resp.json()
+		})
+		.then(data => {
+			document.body.innerHTML = "<h3>Inserted Successfully</h3><br><a href='/'>Main page</a>"
+		})
+		.catch(err => {
+			// error handling
+			console.log(err)
+			document.body.innerHTML = `<h2>${err}</h2`;
+		})
+	}
+</script>
+</html>

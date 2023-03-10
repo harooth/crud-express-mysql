@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Get an item</title>
+</head>
+
+<body>
+	<!-- <form action="get.html">
+		<input type="text" name="xz">
+	</form> -->
+	<!-- <h3 class="h1"></h3> -->
+</body>
+<script>
+
+	let urlParams = new URLSearchParams(window.location.search);
+	let id = urlParams.get('id');
+	console.log(id);
+	/* 
+	if (id !== null) {
+	   fetch(`/sql/${id}`).then(data => data.json()).then(data => {
+		   console.log(data)
+		   document.write(`
+			   <p>Name: ${data[0].name}</p>
+			   <p>Email: ${data[0].email}</p>
+			   <p>Password: ${data[0].password}</p>
+			   <a href='/'>Main page</a>
+		   `)
+	   }).catch(err => {
+		   document.querySelector(".h1").innerHTML = "<h1>Error, id does not exist!</h1>";
+		   console.log(err)
+	   })
+   } else {
+	   document.querySelector(".h1").innerHTML = "<h1>Wrong request</h1>";
+   }
+   */
+	fetch(`/single/${id || "error"}`)
+		// checking if there is an error while fetching result
+		.then(async resp => {
+			if (!resp.ok) {
+				const data = await resp.json();
+				return Promise.reject(data.msg)
+			}
+			return resp.json()
+		})
+		.then(data => {
+			console.log(data)
+			document.body.innerHTML = `
+				<p>Name: ${data[0].name}</p>
+				<p>Email: ${data[0].email}</p>
+				<p>Password: ${data[0].password}</p>
+				<a href='/'>Main page</a>
+			`
+
+		})
+		.catch(err => {
+			// error handling
+			console.log(err)
+			document.body.innerHTML = `<h2>${err}</h2`;
+		})
+
+
+</script>
+
+</html>
